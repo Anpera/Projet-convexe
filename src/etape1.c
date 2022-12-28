@@ -34,19 +34,28 @@ void dessineLstPoint(ListePoint l){
 int main(){
     ListePoint lst_p = NULL;
     ConvexHull conv;
+    Point souris;
     initConvexHull(&conv);
-    MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
+    // MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
 
+    // entrerPolygone(&lst_p);
+    // MLV_clear_window(MLV_COLOR_BLACK);
+    // MLV_wait_mouse_or_seconds(NULL, NULL, 30);
+    // MLV_free_window();
 
-
-    entrerPolygone(&lst_p);
-
-    MLV_clear_window(MLV_COLOR_BLACK);
-
-    
-    
-
-    MLV_wait_mouse_or_seconds(NULL, NULL, 30);
-    MLV_free_window();
+    for (int x = 0; x < 10; x++){
+        souris.x = x, souris.y = 10-x;
+        // Insère un point en tête de la liste de points
+        insererTetePoint(&lst_p,souris);
+        /*
+        Insère un point à la fin de la liste des
+        points de l'enveloppe convexe 
+        */ 
+        enfileConvex(&conv, &lst_p->p);
+    }
+    printf("Affichage de la liste de points :\n");
+    affichageLstPoint(lst_p);
+    printf("Affichage de la liste des points de l'enveloppe :\n");
+    parcoursConvex(conv);
     return 0;
 }

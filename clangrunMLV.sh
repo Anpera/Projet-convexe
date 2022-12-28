@@ -1,1 +1,0 @@
-clang $1.c -Wall -Wfatal-errors -std=c17 -lMLV -o $1 && ./$1 ${@:2}

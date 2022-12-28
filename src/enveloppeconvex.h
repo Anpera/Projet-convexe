@@ -2,6 +2,7 @@
 #define _ENVELOPPECONVEX_H_
 #include "listepoints.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct _vrtx_{
     Point *s;
@@ -19,7 +20,8 @@ void initConvexHull(ConvexHull * conv);
 Vertex* allouerVertex(Point *pval);
 int estVide(ConvexHull *conv);
 int enfileConvex(ConvexHull *conv, Point *pval);
-int test_triangle_Indirect(Point p, Point B, Point C);
-int testNotInConvex(ConvexHull *conv, Point point);
+void parcoursConvex(ConvexHull conv);
+// int test_triangle_Indirect(Point p, Point B, Point C);
+// int testNotInConvex(ConvexHull *conv, Point point);
 
 #endif

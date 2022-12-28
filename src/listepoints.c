@@ -18,3 +18,9 @@ int insererTetePoint(ListePoint *liste, Point val){
     }
     return 0;
 }
+
+void affichageLstPoint(ListePoint liste){
+    for(;liste; liste= liste->suivant){
+        printf("%d %d\n", liste->p.x, liste->p.y);
+    }
+}
