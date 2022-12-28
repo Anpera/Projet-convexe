@@ -1,5 +1,6 @@
 #ifndef _LISTEPOINTS_H_
 #define _LISTEPOINTS_H_
+#include <stdlib.h>
 
 #define TAILLE_X 512
 #define TAILLE_Y 512
@@ -14,5 +15,8 @@ typedef struct cellulePoint {
     Point p;
     struct cellulePoint *suivant;
 } CellulePoint, *ListePoint;
+
+CellulePoint* allouerCellule(Point pval);
+int insererTetePoint(ListePoint *liste, Point val);
 
 #endif

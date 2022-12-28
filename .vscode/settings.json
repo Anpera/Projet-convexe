@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "enveloppeconvex.h": "c"
+        "enveloppeconvex.h": "c",
+        "listepoints.h": "c"
     }
 }
