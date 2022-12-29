@@ -3,5 +3,6 @@
         "stdlib.h": "c",
         "enveloppeconvex.h": "c",
         "listepoints.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

@@ -6,7 +6,7 @@
 #include "listepoints.h"
 #include "enveloppeconvex.h"
 
-int entrerPolygone(ListePoint *liste);
+int entrerPolygone(ListePoint *liste, ConvexHull *conv);
 void dessineLstPoint(ListePoint l);
 
 #endif

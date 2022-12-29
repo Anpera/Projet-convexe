@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wfatal-errors -std=c17
+CFLAGS = -Wall -Wfatal-errors -std=c17 -g
 
 all: etape1
 

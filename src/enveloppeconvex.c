@@ -1,4 +1,6 @@
 #include "enveloppeconvex.h"
+#include <MLV/MLV_all.h>
+#include <stdio.h>
 
 void initConvexHull(ConvexHull * conv){
     conv->curlen = 0;
@@ -66,21 +68,82 @@ void parcoursConvex(ConvexHull conv){
     }
 }
 
-// int test_triangle_Indirect(Point p, Point B, Point C){
-//     if ((B.x - p.x) * (C.y - p.y) - (C.x - p.x) * (B.y - p.y) < 0)
-//         return 1; 
+int insertConvex(Vertex *maillon, Point *pval){
+    Vertex* nouveau = allouerVertex(pval);
+    if (nouveau){
+        nouveau->next = maillon->next;
+        nouveau->prev = maillon;
 
-//     return 0;
-// }
+        maillon->next->prev = nouveau;
+        maillon->next = nouveau;
+        return 1;
+    }
+    return 0;
+}
 
-// int testNotInConvex(ConvexHull *conv, Point point){
-//     Polygon poly = conv->pol;
-//     for (int n = 0;n <= conv->curlen; n++){
-//         if (test_triangle_Indirect(point, *(poly->s), *(poly->next->s))){
-//             return 1;
-//         }
-//         poly = poly->next;
+int test_triangle_Indirect(Point A, Point B, Point C){
+    if (((B.x - A.x) * (C.y - A.y)) - ((C.x - A.x) * (B.y - A.y)) >= 0){
+        return 1;
+    }
+    return 0;
+        
+}
 
-//     }
-//     return 0;
-// }
+void suppresionVertex(Vertex* suppression, ConvexHull *conv){
+    if (conv->curlen >3){
+        if (suppression == conv->pol){
+            printf("entree changé\n");
+            conv->pol = conv->pol->next;
+        }
+        suppression->next->prev = suppression->prev;
+        suppression->prev->next = suppression->next;
+
+        free(suppression);
+        conv->curlen--;
+    }
+}
+
+void nettoyageAvant(Vertex* origine, ConvexHull *conv){    
+    while(test_triangle_Indirect(*origine->s, *(origine->next)->s, *(origine->next->next)->s)){
+        suppresionVertex(origine->next, conv);
+    }
+}
+
+void nettoyageArriere(Vertex* origine, ConvexHull *conv){
+    while(test_triangle_Indirect(*origine->s, *(origine->prev->prev)->s, *(origine->prev)->s)){
+        suppresionVertex(origine->prev, conv);
+    }
+}
+
+int testNotInConvex(ConvexHull *conv, Point *point){
+    Polygon cell = conv->pol;
+    Point A;
+    Point B;
+    Point C;
+
+    if (conv->curlen < 3){
+        if (enfileConvex(conv, point)){
+            return 1;
+        }
+    }
+    else{
+        for (int i = 0; i<conv->curlen; i++, cell = cell->next){
+            A = *point;
+            B = *(cell->s);
+            C = *(cell->next->s);
+            if (test_triangle_Indirect(A,B,C)){
+
+                MLV_draw_filled_circle(A.x, A.y, 10, MLV_COLOR_PURPLE1);
+                MLV_draw_filled_circle(B.x, B.y, 10, MLV_COLOR_GREEN1);
+                MLV_draw_filled_circle(C.x, C.y, 10, MLV_COLOR_CYAN2);
+                if(insertConvex(cell, point)){
+                        conv->curlen++;
+                        nettoyageArriere(cell, conv);
+                        nettoyageAvant(cell->prev, conv);
+                        return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
