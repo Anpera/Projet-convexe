@@ -58,9 +58,9 @@ void test(ConvexHull *conv, ListePoint *lst_p){
 
     souris.x = 35, souris.y = 35;
     insererTetePoint(lst_p,souris);
-    insertConvex(conv->pol->prev, &(*lst_p)->p);
+    insertConvex(conv->pol->prev, &(*lst_p)->p, conv);
     conv->curlen++;
-    insertConvex(conv->pol->next->next, &(*lst_p)->p);
+    insertConvex(conv->pol->next->next, &(*lst_p)->p, conv);
     conv->curlen++;
     printf("Affichage de la liste des points de l'enveloppe :\n");
     parcoursConvex(*conv);

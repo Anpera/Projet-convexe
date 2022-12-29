@@ -68,7 +68,7 @@ void parcoursConvex(ConvexHull conv){
     }
 }
 
-int insertConvex(Vertex *maillon, Point *pval){
+int insertConvex(Vertex *maillon, Point *pval, ConvexHull *conv){
     Vertex* nouveau = allouerVertex(pval);
     if (nouveau){
         nouveau->next = maillon->next;
@@ -76,6 +76,8 @@ int insertConvex(Vertex *maillon, Point *pval){
 
         maillon->next->prev = nouveau;
         maillon->next = nouveau;
+
+        conv->pol = nouveau;
         return 1;
     }
     return 0;
@@ -136,7 +138,7 @@ int testNotInConvex(ConvexHull *conv, Point *point){
                 MLV_draw_filled_circle(A.x, A.y, 10, MLV_COLOR_PURPLE1);
                 MLV_draw_filled_circle(B.x, B.y, 10, MLV_COLOR_GREEN1);
                 MLV_draw_filled_circle(C.x, C.y, 10, MLV_COLOR_CYAN2);
-                if(insertConvex(cell, point)){
+                if(insertConvex(cell, point, conv)){
                         conv->curlen++;
                         nettoyageArriere(cell, conv);
                         nettoyageAvant(cell->prev, conv);

@@ -21,7 +21,7 @@ Vertex* allouerVertex(Point *pval);
 int estVide(ConvexHull *conv);
 int enfileConvex(ConvexHull *conv, Point *pval);
 void parcoursConvex(ConvexHull conv);
-int insertConvex(Vertex *maillon, Point *pval);
+int insertConvex(Vertex *maillon, Point *pval, ConvexHull *conv);
 int test_triangle_Indirect(Point p, Point B, Point C);
 void suppresionVertex(Vertex* suppresion, ConvexHull *conv);
 void nettoyageAvant(Vertex* origine, ConvexHull *conv);
