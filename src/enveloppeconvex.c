@@ -140,8 +140,8 @@ int testNotInConvex(ConvexHull *conv, Point *point){
                 MLV_draw_filled_circle(C.x, C.y, 10, MLV_COLOR_CYAN2);
                 if(insertConvex(cell, point, conv)){
                         conv->curlen++;
-                        nettoyageArriere(cell, conv);
-                        nettoyageAvant(cell->prev, conv);
+                        nettoyageArriere(cell->prev, conv);
+                        nettoyageAvant(cell->next, conv);
                         return 1;
                 }
             }
