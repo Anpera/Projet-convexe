@@ -13,12 +13,11 @@ void dessineConvexe(ConvexHull conv){
                     cell->next->s->x, cell->next->s->y, 
                     MLV_COLOR_ORCHID1);
     }
-
 }
 
 int entrerPolygone(ListePoint *liste, ConvexHull *conv){
     
-    Point souris;
+    Point souris; 
 
     MLV_Event event = MLV_wait_keyboard_or_mouse(NULL, NULL, NULL, &souris.x, &souris.y);
 
@@ -65,19 +64,20 @@ int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre
     Point souris;
     double tempx; 
     double tempy;
-    double po;
+    double point;
     double r;
 
-    for (int n = 0; n<=200; n++){
+    for (int n = 1; n<=200; n++){
 
         MLV_clear_window(MLV_COLOR_BLACK);
 
-        po = MLV_get_random_double(0,1) * 2 * PI;
-        r = rayon * sqrt(MLV_get_random_double(0,1));
-        // Pour cercle qui augmente petit à petit, changer le rayon ici
+        point = MLV_get_random_double(0,1) * 2 * PI;
+        r = n * sqrt(MLV_get_random_double(0,1));
+        //r = (n+10);
+        // Pour cercle qui augmente petit à petit, changer le rayon ici pour une valeur fixe
 
-        tempx = r * cos(po);
-        tempy = r * sin(po);
+        tempx = r * cos(point);
+        tempy = r * sin(point);
 
         souris.x = (int) centre_X + tempx;
         souris.y = (int) centre_Y + tempy;
@@ -133,11 +133,11 @@ int main(){
     MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
     
 
-    //entrerPolygone(&lst_p, &conv);
+    entrerPolygone(&lst_p, &conv);
 
-    //polyAleaCarre(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3);
+    polyAleaCarre(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3);
 
-    polyAleaCercle(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3);
+    ///polyAleaCercle(&lst_p, &conv, TAILLE_X2, TAILLE_Y/2, TAILLE_X/3);
 
     // for (int i = 0; i <= 20; i++){
     //     lst_p = NULL;

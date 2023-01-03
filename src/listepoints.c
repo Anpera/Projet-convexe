@@ -2,7 +2,7 @@
 
 CellulePoint* allouerCellule(Point pval){
     CellulePoint* cell = (CellulePoint *)malloc (sizeof(CellulePoint));
-    if (cell!=NULL){
+    if (cell != NULL){
         cell->p = pval;
         cell->suivant = NULL;
     }

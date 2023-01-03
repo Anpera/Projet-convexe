@@ -34,7 +34,7 @@ int estVide(ConvexHull *conv){
 }
 
 int enfileConvex(ConvexHull *conv, Point *pval){
-    // Ajoute à la tête une adresse de point à l'enveloppe Convex
+    // Ajoute à la fin une adresse de point à l'enveloppe Convex
     Vertex* nouveau = allouerVertex(pval);
     if (nouveau){
         if (estVide(conv)){
@@ -89,13 +89,11 @@ int test_triangle_Indirect(Point A, Point B, Point C){
         return 1;
     }
     return 0;
-        
 }
 
 void suppresionVertex(Vertex* suppression, ConvexHull *conv){
     if (conv->curlen >3){
         if (suppression == conv->pol){
-            printf("entree changé\n");
             conv->pol = conv->pol->next;
         }
         suppression->next->prev = suppression->prev;
@@ -107,17 +105,13 @@ void suppresionVertex(Vertex* suppression, ConvexHull *conv){
 }
 
 void nettoyageAvant(Vertex* origine, ConvexHull *conv){   
-    for (int i = 0; i <= conv->curlen; i++){ 
-        if (test_triangle_Indirect(*origine->s, *(origine->next)->s, *(origine->next->next)->s))
-            suppresionVertex(origine->next, conv);
-    }
+    while (test_triangle_Indirect(*origine->s, *(origine->next)->s, *(origine->next->next)->s))
+        suppresionVertex(origine->next, conv);
 }
 
 void nettoyageArriere(Vertex* origine, ConvexHull *conv){
-    for (int i = 0; i <= conv->curlen; i++){
-        if(test_triangle_Indirect(*origine->s, *(origine->prev->prev)->s, *(origine->prev)->s))
-            suppresionVertex(origine->prev, conv);
-    }
+    while (test_triangle_Indirect(*origine->s, *(origine->prev->prev)->s, *(origine->prev)->s))
+        suppresionVertex(origine->prev, conv);
 }
 
 int testNotInConvex(ConvexHull *conv, Point *point){
@@ -131,24 +125,24 @@ int testNotInConvex(ConvexHull *conv, Point *point){
             return 1;
         }
     }
+
     else if (conv->curlen == 2){
         A = *point;
         B = *(conv->pol->s);
         C = *(conv->pol->next->s);
+
         if (test_triangle_Indirect(A, B, C)){
             if (insertConvex(conv->pol, point, conv)){
                 return 1;
             }
-            else{
-                return 0;
-            }
         }
+        
         else{
             if(enfileConvex(conv, point))
             return 1;
         }
-
     }
+
     else{
         for (int i = 0; i<conv->curlen; i++, cell = cell->next){
             A = *point;
