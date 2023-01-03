@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define TAILLE_X 512
-#define TAILLE_Y 512
 #define LENMAX 50
 
 typedef struct{
