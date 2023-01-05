@@ -36,15 +36,40 @@ int entrerPolygone(ListePoint *liste, ConvexHull *conv){
     return 1;
 }
 
-int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon){
+int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon, int nbpoints){
     Point souris;
+    int tempx, tempy;
+    double pas = (double) rayon/nbpoints;
+    double r;
 
-    for (int n = 0; n<=200; n++) {
-
+    for (int n = 1; n<=nbpoints; n++) {
         MLV_clear_window(MLV_COLOR_BLACK);
+        if (n<10)
+            r = n+1;
+        else
+            r = n * pas;
 
-        souris.x = MLV_get_random_integer(centre_X-rayon, centre_X+rayon);
-        souris.y = MLV_get_random_integer(centre_Y-rayon, centre_Y+rayon);
+        tempx = MLV_get_random_double(centre_X-r, centre_X+r) * MLV_get_random_integer(0,2);
+        if (tempx == 0){
+            tempx = centre_X + (r * pow(-1, MLV_get_random_integer(0,2)));
+            tempy = MLV_get_random_integer(centre_Y-r, centre_Y+r);
+        }
+
+        else{
+            tempy = centre_Y + r * (pow(-1, MLV_get_random_integer(0,2)));
+        }
+
+        if (tempx < 0)
+            tempx = 0;
+        else if (tempx > TAILLE_X)
+            tempx = TAILLE_X;
+        if (tempy < 0)
+            tempy = 0;
+        else if (tempy > TAILLE_Y)
+            tempy = TAILLE_Y;
+
+        souris.x = tempx;
+        souris.y = tempy;
 
         insererTetePoint(liste, souris);
         testNotInConvex(conv, &(*liste)->p);
@@ -60,20 +85,26 @@ int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_
     return 1;
 }
 
-int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon){
+int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon, int nbpoints){
     Point souris;
     double tempx; 
     double tempy;
     double point;
     double r;
+    double pas = (double) rayon/nbpoints;
 
-    for (int n = 1; n<=200; n++){
+    for (int n = 1; n<=nbpoints; n++){
 
         MLV_clear_window(MLV_COLOR_BLACK);
 
         point = MLV_get_random_double(0,1) * 2 * PI;
-        r = n * sqrt(MLV_get_random_double(0,1));
-        //r = (n+10);
+        //r = rayon * sqrt(MLV_get_random_double(0,1));
+        if (n<10)
+            r = n+1;
+        else
+            r = n * pas;
+        // if (r<10)
+        //     r = n * sqrt(MLV_get_random_double(0,1));
         // Pour cercle qui augmente petit à petit, changer le rayon ici pour une valeur fixe
 
         tempx = r * cos(point);
@@ -81,6 +112,15 @@ int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre
 
         souris.x = (int) centre_X + tempx;
         souris.y = (int) centre_Y + tempy;
+
+        if (souris.x < 0)
+            souris.x = 0;
+        else if (souris.x > TAILLE_X)
+            souris.x = TAILLE_X;
+        if (souris.y < 0)
+            souris.y = 0;
+        else if (souris.y > TAILLE_Y)
+            souris.y = TAILLE_Y;
 
         insererTetePoint(liste, souris);
         testNotInConvex(conv, &(*liste)->p);
@@ -90,7 +130,34 @@ int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre
 
         MLV_actualise_window();
 
-        MLV_wait_milliseconds(50);
+        
+
+        MLV_wait_milliseconds(10);
+    }
+
+    
+    return 1;
+}
+
+int Choixfigure(ListePoint *lst_p, ConvexHull *conv, int figure){
+    Point souris;
+    if (figure){
+        MLV_wait_mouse(&souris.x, &souris.y);
+    }
+    
+    switch (figure)
+    {
+    case 1:
+        polyAleaCarre(lst_p, conv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS);
+        break;
+    
+    case 2:
+        polyAleaCercle(lst_p, conv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS);
+        break;
+
+    default:
+        entrerPolygone(lst_p, conv);
+        break;
     }
     return 1;
 }
@@ -132,20 +199,16 @@ int main(){
     //test(&conv, &lst_p);
     MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
     
+    // Choixfigure(&lst_p, &conv, 2);
 
-    entrerPolygone(&lst_p, &conv);
+    for (int i = 0; i <= 200; i++){
+        lst_p = NULL;
+        initConvexHull(&conv);
+        Choixfigure(&lst_p, &conv, 1);
+        //polyAleaCarre(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3, 500);
 
-    polyAleaCarre(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3);
-
-    ///polyAleaCercle(&lst_p, &conv, TAILLE_X2, TAILLE_Y/2, TAILLE_X/3);
-
-    // for (int i = 0; i <= 20; i++){
-    //     lst_p = NULL;
-    //     initConvexHull(&conv);
-    //     polyAleaCarre(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3);
-
-    //     MLV_wait_milliseconds(100);
-    // }
+        MLV_wait_milliseconds(100);
+    }
 
     MLV_wait_keyboard_or_mouse_or_seconds(NULL, NULL, NULL, NULL, NULL, 30);
     MLV_free_window();

@@ -10,11 +10,12 @@
 #define PI (3.141592653589793)
 #define TAILLE_X 512
 #define TAILLE_Y 512
+#define NBRPOINTS 1000
 
 void dessineLstPoint(ListePoint l);
 int entrerPolygone(ListePoint *liste, ConvexHull *conv);
-int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int taille);
-int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon);
+int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon, int nbpoints);
+int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon, int nbpoints);
 void test(ConvexHull *conv, ListePoint *lst_p);
 
 #endif
