@@ -15,7 +15,7 @@ void dessineConvexe(ConvexHull conv){
     }
 }
 
-int entrerPolygone(ListePoint *liste, ConvexHull *conv){
+int entrerPolygone(ListePoint *liste, ListeConvex *conv, int emboite){
     
     Point souris; 
 
@@ -25,10 +25,16 @@ int entrerPolygone(ListePoint *liste, ConvexHull *conv){
         MLV_clear_window(MLV_COLOR_BLACK);
         
         insererTetePoint(liste, souris);
-        testNotInConvex(conv, &(*liste)->p);
-
         dessineLstPoint(*liste);
-        dessineConvexe(*conv);
+        if (emboite){
+            testInConvexLST(conv, &(*liste)->p);
+            for (CelluleConvex *index = *conv; index; index=index->suivant)
+                dessineConvexe(index->conv);
+                }
+        else{
+            testNotInConvex(&(*conv)->conv, &(*liste)->p);
+            dessineConvexe((*conv)->conv);
+        }
 
         MLV_actualise_window();
         event = MLV_wait_keyboard_or_mouse(NULL, NULL, NULL, &souris.x, &souris.y);
@@ -36,7 +42,7 @@ int entrerPolygone(ListePoint *liste, ConvexHull *conv){
     return 1;
 }
 
-int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon, int nbpoints){
+int polyAleaCarre(ListePoint *liste, ListeConvex *conv, int centre_X, int centre_Y, int rayon, int nbpoints, int emboite){
     Point souris;
     int tempx, tempy;
     double pas = (double) rayon/nbpoints;
@@ -44,7 +50,7 @@ int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_
 
     for (int n = 1; n<=nbpoints; n++) {
         MLV_clear_window(MLV_COLOR_BLACK);
-        if (n<10)
+        if (n<10 && nbpoints >= 200)
             r = n+1;
         else
             r = n * pas;
@@ -72,10 +78,17 @@ int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_
         souris.y = tempy;
 
         insererTetePoint(liste, souris);
-        testNotInConvex(conv, &(*liste)->p);
-
         dessineLstPoint(*liste);
-        dessineConvexe(*conv);
+
+        if (emboite){
+            testInConvexLST(conv, &(*liste)->p);
+            for (CelluleConvex *index = *conv; index; index=index->suivant)
+            dessineConvexe(index->conv);
+            }
+        else{
+            testNotInConvex(&(*conv)->conv, &(*liste)->p);
+            dessineConvexe((*conv)->conv);
+            }
 
         MLV_actualise_window();
 
@@ -85,7 +98,7 @@ int polyAleaCarre(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_
     return 1;
 }
 
-int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre_Y, int rayon, int nbpoints){
+int polyAleaCercle(ListePoint *liste, ListeConvex *conv, int centre_X, int centre_Y, int rayon, int nbpoints, int emboite){
     Point souris;
     double tempx; 
     double tempy;
@@ -99,7 +112,7 @@ int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre
 
         point = MLV_get_random_double(0,1) * 2 * PI;
         //r = rayon * sqrt(MLV_get_random_double(0,1));
-        if (n<10)
+        if (n<10 && nbpoints >= 200)
             r = n+1;
         else
             r = n * pas;
@@ -123,11 +136,17 @@ int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre
             souris.y = TAILLE_Y;
 
         insererTetePoint(liste, souris);
-        testNotInConvex(conv, &(*liste)->p);
-
         dessineLstPoint(*liste);
-        dessineConvexe(*conv);
 
+        if (emboite){
+            testInConvexLST(conv, &(*liste)->p);
+            for (CelluleConvex *index = *conv; index; index=index->suivant)
+            dessineConvexe(index->conv);
+            }
+        else{
+            testNotInConvex(&(*conv)->conv, &(*liste)->p);
+            dessineConvexe((*conv)->conv);
+            }
         MLV_actualise_window();
 
         
@@ -138,25 +157,37 @@ int polyAleaCercle(ListePoint *liste, ConvexHull *conv, int centre_X, int centre
     
     return 1;
 }
-
-int Choixfigure(ListePoint *lst_p, ConvexHull *conv, int figure){
+int Choixfigure(int figure){
+    ListePoint lst_p = NULL;
+    ListeConvex lstConv= alloueConvex();
     Point souris;
-    if (figure){
+    if (figure == 1 || figure == 2 || figure == 3 || figure == 4){
         MLV_wait_mouse(&souris.x, &souris.y);
     }
     
     switch (figure)
     {
     case 1:
-        polyAleaCarre(lst_p, conv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS);
+        polyAleaCarre(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS, 0);
         break;
     
     case 2:
-        polyAleaCercle(lst_p, conv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS);
+        polyAleaCarre(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, 250, 1);
         break;
 
+    case 3:
+        polyAleaCercle(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS, 0);
+        break;
+    
+    case 4:
+        polyAleaCercle(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, 50, 1);
+        break;
+
+    case 5:
+        entrerPolygone(&lst_p, &lstConv, 1);
+
     default:
-        entrerPolygone(lst_p, conv);
+        entrerPolygone(&lst_p, &lstConv, 0);
         break;
     }
     return 1;
@@ -192,23 +223,13 @@ void test(ConvexHull *conv, ListePoint *lst_p){
 }
 
 int main(){
-    ListePoint lst_p = NULL;
-    ConvexHull conv;
-    initConvexHull(&conv);
 
     //test(&conv, &lst_p);
     MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
+
+    //PolyLstConvex(&lst_p, &lstConv);
     
-    // Choixfigure(&lst_p, &conv, 2);
-
-    for (int i = 0; i <= 200; i++){
-        lst_p = NULL;
-        initConvexHull(&conv);
-        Choixfigure(&lst_p, &conv, 1);
-        //polyAleaCarre(&lst_p, &conv, TAILLE_X/2, TAILLE_Y/2, TAILLE_X/3, 500);
-
-        MLV_wait_milliseconds(100);
-    }
+    Choixfigure(2);
 
     MLV_wait_keyboard_or_mouse_or_seconds(NULL, NULL, NULL, NULL, NULL, 30);
     MLV_free_window();
