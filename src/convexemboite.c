@@ -1,10 +1,11 @@
 #include "convexemboite.h"
 
-
+/**
+ * @brief Permet d'allouer l'espace nécessaire à une enveloppe convex et l'initialise
+ * 
+ * @return CelluleConvex* Adresse de l'enveloppe convexe allouée
+ */
 CelluleConvex* alloueConvex() {
-    /*
-    Fonction qui alloue un maillon de la liste chainée
-    */
     CelluleConvex *cell = (CelluleConvex *)malloc (sizeof(CelluleConvex));
 
     if (cell) {
@@ -14,6 +15,12 @@ CelluleConvex* alloueConvex() {
     return cell;
 }
 
+/**
+ * @brief Ajoute une enveloppe convexe à la fin d'une liste d'enveloppes convexes
+ * 
+ * @param l     Liste d'enveloppes à modifier
+ * @return int  Permet de savoir si l'allocation s'est bien passé
+ */
 int enfileLstConvex(ListeConvex *l) {
     /*
     Fonction qui ajoute un maillon à la fin de la liste chainée
@@ -30,10 +37,14 @@ int enfileLstConvex(ListeConvex *l) {
     return 0;
 }
 
+/**
+ * @brief Supprime un vertex d'une liste de vertex contenue dans
+ *          une enveloppe convexe
+ * 
+ * @param suppression   Adresse du vertex à supprimer
+ * @param lstConv       Enveloppe convexe à modifier
+ */
 void suppresionVertexLST(Vertex* suppression, ListeConvex *lstConv) {
-    /*
-    Fonction qui supprime un maillon de la liste chainée
-    */
     if ((*lstConv)->conv.curlen > 3) {  // Si la liste contient plus de 3 maillons
         if (suppression == (*lstConv)->conv.pol)
             (*lstConv)->conv.pol = (*lstConv)->conv.pol->next;
@@ -51,26 +62,37 @@ void suppresionVertexLST(Vertex* suppression, ListeConvex *lstConv) {
     }
 }
 
+/**
+ * @brief Fonction qui, en cas de suppression d'un maillon, nettoie les maillons avants qui ne sont plus dans l'enveloppe convexe concernée
+ * 
+ * @param origine   Vertex d'origine pour le nettoyage
+ * @param conv      Enveloppe convexe où est contenue le vertex
+ */
 void nettoyageAvantLST(Vertex* origine, ListeConvex *conv) {
-    /*
-    Fonction qui, en cas de suppression d'un maillon, nettoie les maillons avants qui ne sont plus dans l'enveloppe convexe concernée
-    */
     while (test_triangle_Indirect(*origine->s, *(origine->next)->s, *(origine->next->next)->s))
         suppresionVertexLST(origine->next, conv);
 }
 
+/**
+ * @brief Fonction qui, en cas de suppression d'un maillon, nettoie les maillons arrières qui ne sont plus dans l'enveloppe convexe concernée
+ * 
+ * @param origine   Vertex d'origine pour le nettoyage
+ * @param conv      Enveloppe convexe où est contenue le vertex
+ */
 void nettoyageArriereLST(Vertex* origine, ListeConvex *conv) {
-    /*
-    Fonction qui, en cas de suppression d'un maillon, nettoie les maillons arrières qui ne sont plus dans l'enveloppe convexe concernée
-    */
     while (test_triangle_Indirect(*origine->s, *(origine->prev->prev)->s, *(origine->prev)->s))
         suppresionVertexLST(origine->prev, conv);
 }
 
+/**
+ * @brief   Fonction qui teste si un point est dans l'enveloppe convexe concernée,
+ *          Sinon, teste récursivement avec l'enveloppe convexe suivante
+ * 
+ * @param lstConv   Liste d'enveloppe convexes
+ * @param point     Adresse d'un point à tester
+ * @return int      Permet de savoir si tout s'est bien passé
+ */
 int testInConvexLST(ListeConvex *lstConv, Point *point) {
-    /*
-    Fonction qui teste si un point est dans l'enveloppe convexe concernée
-    */
     Polygon cell = (*lstConv)->conv.pol;
     Point A;
     Point B;
@@ -120,13 +142,4 @@ int testInConvexLST(ListeConvex *lstConv, Point *point) {
 
     
     return 0;
-}
-
-
-void printLstConvex(ListeConvex l) {
-    /*
-    Fonction qui affiche la liste chainée
-    */
-    for (CelluleConvex *index = l; index; index=index->suivant)
-        printf("%d \n", index->conv.curlen);
 }

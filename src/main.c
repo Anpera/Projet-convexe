@@ -1,23 +1,34 @@
 #include "main.h"
 
+/**
+ * @brief Permet de dessiner un point unique.
+ * 
+ * @param p Point à dessiner
+ */
 void dessinePoint(Point p){
     MLV_draw_filled_circle(p.x, p.y, 4, MLV_COLOR_WHITE);
     MLV_actualise_window();
     MLV_clear_window(MLV_COLOR_BLACK);
 }
 
+/**
+ * @brief Permet de dessiner tous les points présents dans
+ *        une liste de points
+ * 
+ * @param l Liste chaînée de points
+ */
 void dessineLstPoint(ListePoint l) {
-    /*
-    Dessine la liste de points
-    */
     for(; l; l = l->suivant)
         MLV_draw_filled_circle(l->p.x, l->p.y, 4, MLV_COLOR_WHITE);
 }
 
-void dessineConvexe(ConvexHull conv) {
-    /*
-    Dessine l'enveloppe convexe
-    */
+/**
+ * @brief Dessine le polygone formé par les points
+ *        contenue dans une enveloppe convexe
+ * 
+ * @param conv Enveloppe convexe contenant les points
+ */
+void dessineConvexe(ConvexHull conv){
     Polygon cell = conv.pol;
 
     for (int i = 0; i < conv.curlen; i++, cell = cell->next) {
@@ -27,10 +38,15 @@ void dessineConvexe(ConvexHull conv) {
     }
 }
 
-void choixcouleur(int nbrCol, MLV_Color * poly, MLV_Color * point) {
-    /*
-    Choisi une couleur en fonction de l'enveloppe convexe
-    */
+/**
+ * @brief Transforme deux variables MLV_Color et leur attribue une couleur
+ *        selon la variable nbrCol
+ * 
+ * @param nbrCol Identifiant de l'enveloppe convexe qui permet d'attribuer une couleur
+ * @param poly Couleur pour le polygone associer à l'enveloppe convexe
+ * @param point Couleur des points formant le polygone
+ */
+void choixcouleur(int nbrCol, MLV_Color * poly, MLV_Color * point){
     switch (nbrCol%7) {
         case 1:
             *poly = MLV_rgba(255,0,0, 80);
@@ -69,10 +85,14 @@ void choixcouleur(int nbrCol, MLV_Color * poly, MLV_Color * point) {
     }
 }
 
-void dessineLstConvex(ListeConvex lst) {
-    /*
-    Dessine les enveloppes convexes emboitées avec leurs points et couleurs respectives
-    */
+/**
+ * @brief Dessine toutes les enveloppes convexes
+ *        contenus dans une liste d'enveloppes convexes
+ * 
+ * @param lst Liste d'enveloppes convexes
+ */
+
+void dessineLstConvex(ListeConvex lst){
     int lstX[LENMAX];
     int lstY[LENMAX];
     MLV_Color couleur;
@@ -94,11 +114,17 @@ void dessineLstConvex(ListeConvex lst) {
     }
             
 }
-
+/**
+ * @brief Permet de dessiner en direct un polygone selon les clics de la souris
+ * 
+ * @param liste Liste de points permettant de stocker les points de la souris
+ * @param conv  Liste d'enveloppes convexes permettant de stocker la ou les
+ *              enveloppe.s convexes
+ * @param emboite Option pour savoir si on a choisit le mode enveloppes convexes
+ *                emboîtées
+ * @return int  Permet de savoir si tous s'est bien passé.
+ */
 int entrerPolygone(ListePoint *liste, ListeConvex *conv, int emboite) {
-    /*
-    Fonction permettant de dessiner un polygone à la souris
-    */
     Point souris; 
     MLV_Event event = MLV_wait_keyboard_or_mouse(NULL, NULL, NULL, &souris.x, &souris.y);
 
@@ -124,10 +150,21 @@ int entrerPolygone(ListePoint *liste, ListeConvex *conv, int emboite) {
     return 1;
 }
 
+/**
+ * @brief Permet de dessiner automatique une enveloppe convexe formé à partir
+ *        de points aléatoire contenus dans un carré.
+ * 
+ * @param liste         Liste de points
+ * @param conv          Liste d'enveloppes convexes
+ * @param centre_X      Position X du centre de la forme
+ * @param centre_Y      Position Y du centre de la forme
+ * @param rayon         Longueur maximum qu'atteindra le carré.
+ * @param nbpoints      Nombre de points à générer
+ * @param emboite       Option pour savoir si c'est des enveloppes emboîtées ou non.
+ * @return int          Valeur pour savoir si tout s'est bien passé.
+ */
+
 int polyAleaCarre(ListePoint *liste, ListeConvex *conv, int centre_X, int centre_Y, int rayon, int nbpoints, int emboite) {
-    /*
-    Fonction permettant de dessiner un polygone aléatoire dans un carré
-    */
     Point souris;
     int tempx, tempy;
     double pas = (double) rayon/nbpoints;
@@ -180,15 +217,25 @@ int polyAleaCarre(ListePoint *liste, ListeConvex *conv, int centre_X, int centre
         }
 
         MLV_actualise_window();
-        MLV_wait_milliseconds(10);
+        MLV_wait_milliseconds(50);
     }
     return 1;
 }
 
+/**
+ * @brief Permet de dessiner automatique une enveloppe convexe formé à partir
+ *        de points aléatoire contenus dans un cercle.
+ * 
+ * @param liste         Liste de points
+ * @param conv          Liste d'enveloppes convexes
+ * @param centre_X      Position X du centre de la forme
+ * @param centre_Y      Position Y du centre de la forme
+ * @param rayon         Longueur maximum qu'atteindra le cercle.
+ * @param nbpoints      Nombre de points à générer
+ * @param emboite       Option pour savoir si c'est des enveloppes emboîtées ou non.
+ * @return int          Valeur pour savoir si tout s'est bien passé.
+ */
 int polyAleaCercle(ListePoint *liste, ListeConvex *conv, int centre_X, int centre_Y, int rayon, int nbpoints, int emboite) {
-    /*
-    Fonction permettant de dessiner un polygone aléatoire dans un cercle
-    */
     Point souris;
     double tempx; 
     double tempy;
@@ -240,16 +287,21 @@ int polyAleaCercle(ListePoint *liste, ListeConvex *conv, int centre_X, int centr
         }
 
         MLV_actualise_window();
-        MLV_wait_milliseconds(10);
+        MLV_wait_milliseconds(50);
     }
     return 1;
 }
 
+/**
+ * @brief       Fonction permettant de trouver le rayon à partir avec un second point 
+ *              et selon la figure
+ * 
+ * @param origine   Point d'origine pour calculer le rayon.
+ * @param figure    Type de figure pour pouvoir connaitre le rayon.
+ * @return int      Valeur du rayon qu'on a sélectionner
+ */
+
 int trouverayon(Point origine, int figure){
-    /*
-    Fonction permettant de trouver le rayon à partir avec un second point 
-    et selon la figure
-    */ 
     int rayon;
     Point rayonClic;
 
@@ -263,11 +315,14 @@ int trouverayon(Point origine, int figure){
 
     return rayon;
 }
-
-int Choixfigure(int figure) {
-    /*
-    Fonction permettant de choisir la figure à dessiner
-    */
+/**
+ * @brief   Permet de choisir le mode d'exécution entre forme carré ou circulaire,
+ *          enveloppe emboîtée ou non, manuel ou générer aléatoirement
+ * 
+ * @param figure Numéro d'identification du mode
+ * @return int 
+ */
+int choixfigure(int figure){
     ListePoint lst_p = NULL;
     ListeConvex lstConv= alloueConvex();
     Point souris;
@@ -311,41 +366,12 @@ int Choixfigure(int figure) {
     }
     return 1;
 }
-
-void test(ConvexHull *conv, ListePoint *lst_p) {
-    Point souris;
-    initConvexHull(conv);
-
-    for (int x = 0; x < 10; x++) {
-        souris.x = x, souris.y = 10-x;
-        // Insère un point en tête de la liste de points
-        insererTetePoint(lst_p,souris);
-        /*
-        Insère un point à la fin de la liste des
-        points de l'enveloppe convexe 
-        */ 
-        enfileConvex(conv, &(*lst_p)->p);
-    }
-
-    printf("Affichage de la liste de points :\n");
-    affichageLstPoint(*lst_p);
-    printf("Affichage de la liste des points de l'enveloppe :\n");
-    parcoursConvex(*conv);
-
-    souris.x = 35, souris.y = 35;
-    insererTetePoint(lst_p,souris);
-    insertConvex(conv->pol->prev, &(*lst_p)->p, conv);
-    conv->curlen++;
-    insertConvex(conv->pol->next->next, &(*lst_p)->p, conv);
-    conv->curlen++;
-    printf("Affichage de la liste des points de l'enveloppe :\n");
-    parcoursConvex(*conv);
-}
-
+/**
+ * @brief Permet d'afficher le menu de sélection du mode d'exécution
+ * 
+ * @return int 
+ */
 int menu() {
-    /*
-    Fonction permettant d'afficher le menu
-    */
     int choix;
     int type;
 
@@ -377,9 +403,9 @@ int menu() {
     if(choix == 1) {
         MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
         if (type == 1)
-            Choixfigure(5);
+            choixfigure(5);
         else if (type == 2)
-            Choixfigure(6);
+            choixfigure(6);
     }
 
     else if(choix == 2) {
@@ -398,16 +424,16 @@ int menu() {
 
         if (type == 1) {
             if (forme == 1)
-                Choixfigure(1);
+                choixfigure(1);
             else if (forme == 2)
-                Choixfigure(3);
+                choixfigure(3);
         }
 
         else if (type == 2) {
             if (forme == 1)
-                Choixfigure(2);
+                choixfigure(2);
             else if (forme == 2)
-                Choixfigure(4);
+                choixfigure(4);
         }
     }
     return 1;

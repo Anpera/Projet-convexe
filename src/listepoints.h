@@ -17,6 +17,5 @@ typedef struct cellulePoint {
 
 CellulePoint* allouerCellule(Point pval);
 int insererTetePoint(ListePoint *liste, Point val);
-void affichageLstPoint(ListePoint liste);
 
 #endif

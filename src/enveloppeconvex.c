@@ -1,21 +1,25 @@
 #include "enveloppeconvex.h"
-#include <MLV/MLV_all.h>
-#include <stdio.h>
 
+
+/**
+ * @brief Fonction qui initialise une enveloppe Convexe
+ * 
+ * @param conv Enveloppe convexe à initialiser
+ */
 void initConvexHull(ConvexHull * conv) {
-    /*
-    Fonction initialisant une enveloppe convexe
-    */
     conv->curlen = 0;
     conv->maxlen = LENMAX;
     conv->pol = NULL;
 }
 
+/**
+ * @brief   Fonction allouant la mémoire nécessaire pour une cellule de l'enveloppe convexe
+            et y place l'adresse d'un point
+ * 
+ * @param pval      Adresse de point à placer
+ * @return Vertex*  Cellule résultante de l'allocation
+ */
 Vertex* allouerVertex(Point *pval) {
-    /*
-    Fonction allouant la mémoire nécessaire pour une cellule de l'enveloppe convexe
-    ET y place l'adresse d'un point
-    */
     Vertex *cell = (Vertex *)malloc (sizeof(Vertex));
 
     if (cell) {
@@ -26,21 +30,26 @@ Vertex* allouerVertex(Point *pval) {
     return cell;
 }
 
+/**
+ * @brief Fonction testant si l'enveloppe est vide.
+ * 
+ * @param conv Enveloppe convexe à tester
+ * @return int 1 si vide, 0 sinon
+ */
 int estVide(ConvexHull *conv) {
-    /* 
-    Fonction testant si l'enveloppe est vide.
-    :return 1: si vide
-    :return 0: sinon
-    */
     if (conv->pol)
         return 0;
     return 1;
 }
 
+/**
+ * @brief Fonction ajoutant, à la fin, une adresse de point à l'enveloppe convexe
+ * 
+ * @param conv Enveloppe convexe à modifier
+ * @param pval Adresse d'un point à ajouter à l'enveloppe convexe.
+ * @return int Indice pour savoir si tous s'est bien passé.
+ */
 int enfileConvex(ConvexHull *conv, Point *pval) {
-    /*
-    Fonction ajoutant, à la fin, une adresse de point à l'enveloppe convexe
-    */
     Vertex* nouveau = allouerVertex(pval);
     if (nouveau) {
 
@@ -65,19 +74,16 @@ int enfileConvex(ConvexHull *conv, Point *pval) {
     return 0;
 }
 
-void parcoursConvex(ConvexHull conv) {
-    /*
-    Fonction parcourant l'enveloppe convexe et affichant ses points
-    */
-    Polygon cell = conv.pol;
-    for (int i = 0; i<conv.curlen; i++, cell = cell->next)
-        printf("%d %d\n", cell->s->x, cell->s->y);
-}
-
+/**
+ * @brief   Fonction permettant d'insérer l'adresse d'un point après une
+ *          vertex précise.
+ * 
+ * @param maillon   Vertex référence pour savoir où ajouter l'adresse du point
+ * @param pval      Adresse du point à ajouter
+ * @param conv      Enveloppe convexe à modifier
+ * @return int      Permet de savoir si tous s'est bien passé
+ */
 int insertConvex(Vertex *maillon, Point *pval, ConvexHull *conv) {
-    /*
-    Fonction insérant un point dans l'enveloppe convexe
-    */
     Vertex* nouveau = allouerVertex(pval);
     if (nouveau) {
         nouveau->next = maillon->next;
@@ -93,21 +99,28 @@ int insertConvex(Vertex *maillon, Point *pval, ConvexHull *conv) {
     return 0;
 }
 
+/**
+ * @brief Fonction testant si le triangle, formé par trois points, est indirect ou non
+ * 
+ * Généralement
+ * @param A Point d'origine
+ * @param B Son suivant
+ * @param C Le suivant du suivant
+ * @return int 1 si indirect, 0 sinon
+ */
 int test_triangle_Indirect(Point A, Point B, Point C) {
-    /*
-    Fonction testant si le triangle, formé par trois points, est indirect
-    :return 1: si indirect
-    :return 0: sinon
-    */
     if (((B.x - A.x) * (C.y - A.y)) - ((C.x - A.x) * (B.y - A.y)) < 0)
         return 1;
     return 0;
 }
 
+/**
+ * @brief Supprime un point d'une enveloppe convexe
+ * 
+ * @param suppression   Vertex à supprimer
+ * @param conv          Enveloppe convexe à modifier
+ */
 void suppresionVertex(Vertex* suppression, ConvexHull *conv) {
-    /*
-    Fonction supprimant un point de l'enveloppe convexe
-    */
     if (conv->curlen > 3) {
         if (suppression == conv->pol)
             conv->pol = conv->pol->next;
@@ -119,29 +132,36 @@ void suppresionVertex(Vertex* suppression, ConvexHull *conv) {
         conv->curlen--;
     }
 }
-
+/**
+ * @brief Fonction nettoyant l'enveloppe convexe en supprimant les points avants qui ne sont pas dans l'enveloppe
+ * 
+ * @param origine   Point où on commence le nettoyage
+ * @param conv      Enveloppe convexe à modifier
+ */
 void nettoyageAvant(Vertex* origine, ConvexHull *conv) {
-    /*
-    Fonction nettoyant l'enveloppe convexe en supprimant les points avants qui ne sont pas dans l'enveloppe
-    */
     while (test_triangle_Indirect(*origine->s, *(origine->next)->s, *(origine->next->next)->s))
         suppresionVertex(origine->next, conv);
 }
 
+/**
+ * @brief Fonction nettoyant l'enveloppe convexe en supprimant les points arrières qui ne sont pas dans l'enveloppe
+ * 
+ * @param origine   Point où on commence le nettoyage
+ * @param conv      Enveloppe convexe à modifier
+ */
 void nettoyageArriere(Vertex* origine, ConvexHull *conv) {
-    /*
-    Fonction nettoyant l'enveloppe convexe en supprimant les points arrières qui ne sont pas dans l'enveloppe
-    */
     while (test_triangle_Indirect(*origine->s, *(origine->prev->prev)->s, *(origine->prev)->s))
         suppresionVertex(origine->prev, conv);
 }
 
+/**
+ * @brief Fonction testant si un point est dans l'enveloppe convexe
+ * 
+ * @param conv Enveloppe convexe à tester
+ * @param point Point à tester
+ * @return int 1 si dans l'enveloppe, 0 sinon
+ */
 int testNotInConvex(ConvexHull *conv, Point *point) {
-    /*
-    Fonction testant si un point est dans l'enveloppe convexe
-    :return 1: si dans l'enveloppe
-    :return 0: sinon
-    */
     Polygon cell = conv->pol;
     Point A;
     Point B;
@@ -174,11 +194,6 @@ int testNotInConvex(ConvexHull *conv, Point *point) {
             B = *(cell->s);
             C = *(cell->next->s);
             if (test_triangle_Indirect(A,B,C)) {
-                
-                // MLV_draw_filled_circle(point->x, point->y, 10, MLV_COLOR_PURPLE1);
-                // MLV_draw_filled_circle(cell->s->x, cell->s->y, 10, MLV_COLOR_CYAN1);
-                // MLV_draw_filled_circle(cell->next->s->x, cell->next->s->y, 10, MLV_COLOR_GREEN1);
-
                 if(insertConvex(cell, point, conv)) {
                     nettoyageArriere(cell->next, conv);
                     nettoyageAvant(cell->next, conv);
