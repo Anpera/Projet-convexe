@@ -1,4 +1,4 @@
-#include "etape1.h"
+#include "main.h"
 
 void dessinePoint(Point p){
     MLV_draw_filled_circle(p.x, p.y, 4, MLV_COLOR_WHITE);

@@ -1,8 +1,8 @@
 CFLAGS = -Wall -Wfatal-errors -std=c17 -g
 
-all: etape1
+all: main
 
-etape1: obj/etape1.o obj/listepoints.o obj/enveloppeconvex.o obj/convexemboite.o
+main: obj/main.o obj/listepoints.o obj/enveloppeconvex.o obj/convexemboite.o
 	clang $(CFLAGS) -lMLV -lm -o $@ $^
 
 obj/%.o: src/%.c src/%.h

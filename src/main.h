@@ -1,5 +1,5 @@
-#ifndef _ETAPE1_H_
-#define _ETAPE1_H_
+#ifndef _MAIN_H_
+#define _MAIN_H_
 #include <MLV/MLV_all.h>
 #include <stdlib.h>
 #include <stdio.h>

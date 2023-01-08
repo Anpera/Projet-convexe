@@ -1,1 +1,1 @@
-make clean && make all && ./etape1
+make clean && make all && ./main
