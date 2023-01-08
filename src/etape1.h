@@ -9,9 +9,9 @@
 #include "convexemboite.h"
 
 #define PI (3.141592653589793)
-#define TAILLE_X 1000
-#define TAILLE_Y 1000
-#define NBRPOINTS 1000
+#define TAILLE_X 600
+#define TAILLE_Y 600
+#define NBRPOINTS 800
 
 void dessineLstPoint(ListePoint l);
 int entrerPolygone(ListePoint *liste, ListeConvex *conv, int emboite);

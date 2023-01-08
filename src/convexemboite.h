@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct CelluleConvex{
+typedef struct CelluleConvex {
     ConvexHull conv;
     struct CelluleConvex *suivant;
 } CelluleConvex, *ListeConvex;
