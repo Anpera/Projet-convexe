@@ -1,0 +1,3 @@
+Bonjour, si vous voyez ce fichier seul, c'est parce que le programme a bien fait son boulot.
+Ce dossier ne sert qu'à entreposer des fichiers objets temporairement pour la compilation du main.
+Ce fichier texte sert simplement à être sûr que le dossier existe.
