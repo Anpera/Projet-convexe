@@ -79,11 +79,11 @@ void dessineLstConvex(ListeConvex lst) {
     MLV_Color point;
     int col = 0;
 
-    for (CelluleConvex *index = lst; index; index=index->suivant, col++) {
+    for (CelluleConvex *index = lst; index; index=index->suivant, col++) {  // Pour chaque enveloppe convexe
         Polygon cell = index->conv.pol;
         choixcouleur(col, &couleur, &point);
 
-        for(int i = 0; i<index->conv.curlen; i++, cell = cell->next) {
+        for(int i = 0; i<index->conv.curlen; i++, cell = cell->next) {  // Pour chaque point de l'enveloppe convexe
             lstX[i] = cell->s->x;
             lstY[i] = cell->s->y;
         }
@@ -141,6 +141,7 @@ int polyAleaCarre(ListePoint *liste, ListeConvex *conv, int centre_X, int centre
             r = n * pas;
 
         tempx = MLV_get_random_double(centre_X-r, centre_X+r) * MLV_get_random_integer(0,2);
+
         if (tempx == 0) {
             tempx = centre_X + (r * pow(-1, MLV_get_random_integer(0,2)));
             tempy = MLV_get_random_integer(centre_Y-r, centre_Y+r);
@@ -387,6 +388,11 @@ int menu() {
         "1 : Carré\n"\
         "2 : Cercle\n");
         scanf("%d", &forme);
+
+        while (forme != 1 && forme != 2) {
+            printf("\nVeuillez choisir une forme valide :\n");
+            scanf("%d", &forme);
+        }
 
         MLV_create_window("listechaine","", TAILLE_X, TAILLE_Y);
 

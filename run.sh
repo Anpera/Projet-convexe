@@ -1,1 +1,1 @@
-make clean && make all && ./main
+make all && make clean && ./main

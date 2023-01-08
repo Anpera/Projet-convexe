@@ -7,7 +7,7 @@ CelluleConvex* alloueConvex() {
     */
     CelluleConvex *cell = (CelluleConvex *)malloc (sizeof(CelluleConvex));
 
-    if (cell){
+    if (cell) {
         initConvexHull(&cell->conv);
         cell->suivant = NULL;
     }
@@ -34,14 +34,14 @@ void suppresionVertexLST(Vertex* suppression, ListeConvex *lstConv) {
     /*
     Fonction qui supprime un maillon de la liste chainée
     */
-    if ((*lstConv)->conv.curlen > 3) {
+    if ((*lstConv)->conv.curlen > 3) {  // Si la liste contient plus de 3 maillons
         if (suppression == (*lstConv)->conv.pol)
             (*lstConv)->conv.pol = (*lstConv)->conv.pol->next;
 
         suppression->next->prev = suppression->prev;
         suppression->prev->next = suppression->next;
 
-        if (!(*lstConv)->suivant)
+        if (!(*lstConv)->suivant) 
             enfileLstConvex(lstConv);
 
         testInConvexLST(&(*lstConv)->suivant, suppression->s);
@@ -76,12 +76,12 @@ int testInConvexLST(ListeConvex *lstConv, Point *point) {
     Point B;
     Point C;
 
-    if ((*lstConv)->conv.curlen < 2) {
+    if ((*lstConv)->conv.curlen < 2) {  // Si la liste contient moins de 2 maillons, on ajoute le point
         if (enfileConvex(&(*lstConv)->conv, point))
             return 1;
     }
 
-    else if ((*lstConv)->conv.curlen == 2) {
+    else if ((*lstConv)->conv.curlen == 2) {   // Si la liste contient 2 maillons, on teste si le point est dans le triangle formé par les 2 maillons
         A = *point;
         B = *((*lstConv)->conv.pol->s);
         C = *((*lstConv)->conv.pol->next->s);
@@ -97,13 +97,13 @@ int testInConvexLST(ListeConvex *lstConv, Point *point) {
         }
     }
 
-    else {
+    else {  // Si la liste contient plus de 2 maillons, on teste si le point est dans le triangle formé par les 3 maillons successifs
         for (int i = 0; i<(*lstConv)->conv.curlen; i++, cell = cell->next) {
             A = *point;
             B = *(cell->s);
             C = *(cell->next->s);
 
-            if (test_triangle_Indirect(A,B,C)){
+            if (test_triangle_Indirect(A,B,C)){ // Si le point est dans le triangle, on teste si le point est dans l'enveloppe convexe
                 if(insertConvex(cell, point, &(*lstConv)->conv)) {
                         nettoyageArriereLST(cell->next, lstConv);
                         nettoyageAvantLST(cell->next, lstConv);
