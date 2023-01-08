@@ -1,11 +1,17 @@
 #include "etape1.h"
 
+void dessinePoint(Point p){
+    MLV_draw_filled_circle(p.x, p.y, 4, MLV_COLOR_WHITE);
+    MLV_actualise_window();
+    MLV_clear_window(MLV_COLOR_BLACK);
+}
+
 void dessineLstPoint(ListePoint l) {
     /*
     Dessine la liste de points
     */
     for(; l; l = l->suivant)
-        MLV_draw_filled_circle(l->p.x, l->p.y, 4, MLV_COLOR_WHITE);  
+        MLV_draw_filled_circle(l->p.x, l->p.y, 4, MLV_COLOR_WHITE);
 }
 
 void dessineConvexe(ConvexHull conv) {
@@ -143,17 +149,19 @@ int polyAleaCarre(ListePoint *liste, ListeConvex *conv, int centre_X, int centre
         else
             tempy = centre_Y + r * (pow(-1, MLV_get_random_integer(0,2)));
 
-        if (tempx < 0)
-            tempx = 0;
+        if (!emboite){
+            if (tempx < 0)
+                tempx = 0;
 
-        else if (tempx > TAILLE_X)
-            tempx = TAILLE_X;
+            else if (tempx > TAILLE_X)
+                tempx = TAILLE_X;
 
-        if (tempy < 0)
-            tempy = 0;
+            if (tempy < 0)
+                tempy = 0;
 
-        else if (tempy > TAILLE_Y)
-            tempy = TAILLE_Y;
+            else if (tempy > TAILLE_Y)
+                tempy = TAILLE_Y;
+        }
 
         souris.x = tempx;
         souris.y = tempy;
@@ -235,6 +243,26 @@ int polyAleaCercle(ListePoint *liste, ListeConvex *conv, int centre_X, int centr
     }
     return 1;
 }
+
+int trouverayon(Point origine, int figure){
+    /*
+    Fonction permettant de trouver le rayon à partir avec un second point 
+    et selon la figure
+    */ 
+    int rayon;
+    Point rayonClic;
+
+    MLV_wait_mouse(&rayonClic.x, &rayonClic.y);
+    if (figure >= 1 && figure <= 2)
+        rayon = pow(rayonClic.x - origine.x, 2) > pow(rayonClic.y-origine.y,2) ? sqrt(pow(rayonClic.x  - origine.x,2)) : sqrt(pow(rayonClic.y - origine.y,2));
+
+    else
+        rayon = sqrt( pow(rayonClic.x - origine.x, 2) + pow(rayonClic.y - origine.y, 2));
+
+
+    return rayon;
+}
+
 int Choixfigure(int figure) {
     /*
     Fonction permettant de choisir la figure à dessiner
@@ -242,25 +270,30 @@ int Choixfigure(int figure) {
     ListePoint lst_p = NULL;
     ListeConvex lstConv= alloueConvex();
     Point souris;
+    int rayon;
 
-    if (figure == 1 || figure == 2 || figure == 3 || figure == 4)
+    if (figure >= 1 && figure <= 4){
         MLV_wait_mouse(&souris.x, &souris.y);
-    
+        dessinePoint(souris);
+        MLV_wait_milliseconds(50);
+        rayon = trouverayon(souris, figure);
+    }
+        
     switch (figure) {
         case 1:
-            polyAleaCarre(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS, 0);
+            polyAleaCarre(&lst_p, &lstConv, souris.x, souris.y, rayon, NBRPOINTS, 0);
             break;
         
         case 2:
-            polyAleaCarre(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, 200, 1);
+            polyAleaCarre(&lst_p, &lstConv, souris.x, souris.y, rayon, 200, 1);
             break;
 
         case 3:
-            polyAleaCercle(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/3, NBRPOINTS, 0);
+            polyAleaCercle(&lst_p, &lstConv, souris.x, souris.y, rayon, NBRPOINTS, 0);
             break;
         
         case 4:
-            polyAleaCercle(&lst_p, &lstConv, souris.x, souris.y, TAILLE_X/2, 200, 1);
+            polyAleaCercle(&lst_p, &lstConv, souris.x, souris.y, rayon, 200, 1);
             break;
 
         case 5:
