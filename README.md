@@ -35,5 +35,5 @@ Dans le cas d’une génération automatique, une fois la fenêtre ouverte, votr
 
 ## Auteurs
 
-* Amal ABDALLAH
-* Jade ANTONI
+* Amal ABDALLAH TD1/TP1
+* Jade ANTONI  TD1/TP1
